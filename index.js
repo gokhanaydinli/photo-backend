@@ -9,6 +9,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(cors());
 
+app.use('/uploads', express.static('uploads'));
 
 
 app.get('/', (req, res) => {
@@ -45,9 +46,6 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
-app.get('/', (req, res) => {
-  res.send('Node.js backend çalışıyor');
-});
 
 app.post('/upload', upload.single('photo'), (req, res) => {
   if (!req.file) return res.status(400).send('Dosya yüklenemedi');
