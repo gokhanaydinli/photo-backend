@@ -3,6 +3,8 @@ const multer = require('multer');
 const cors = require('cors');
 const fs = require('fs');
 const path = require('path');
+const AdmZip = require('adm-zip');
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -178,6 +180,22 @@ app.get('/list', (req, res) => {
   });
 });
 
+app.get('/zip-all', (req, res) => {
+  fs.readdir(uploadDir, (err, files) => {
+    if (err || files.length === 0) return res.status(404).send('Dosya bulunamadı');
+
+    const zip = new AdmZip();
+    files.forEach(file => {
+      const filepath = path.join(uploadDir, file);
+      zip.addLocalFile(filepath);
+    });
+
+    const data = zip.toBuffer();
+    res.set('Content-Type', 'application/zip');
+    res.set('Content-Disposition', 'attachment; filename="tum-fotograflar.zip"');
+    res.send(data);
+  });
+});
 
 
 app.listen(PORT, () => {
