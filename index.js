@@ -120,7 +120,7 @@ app.post('/upload', upload.single('photo'), (req, res) => {
         <img src="${fileUrl}" alt="Yüklenen Fotoğraf">
         <br>
         <a class="button" href="/">Yeni fotoğraf yükle</a>
-        <a class="button" href="/list">Yüklenenleri Gör</a>
+        <!--<a class="button" href="/list">Yüklenenleri Gör</a>-->
       </div>
     </body>
     </html>
@@ -191,6 +191,8 @@ app.get('/list', (req, res) => {
             border-radius: 8px;
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
             word-wrap: break-word;
+            width: 100%;
+            max-width: 100%;
           }
           img {
             max-width: 100%;
