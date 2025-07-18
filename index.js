@@ -192,7 +192,8 @@ app.get('/list', (req, res) => {
             box-shadow: 0 1px 4px rgba(0,0,0,0.1);
             word-wrap: break-word;
             width: 100%;
-            max-width: 250px;
+            box-sizing: border-box;
+            max-width: 450px;
           }
           img {
             max-width: 100%;
