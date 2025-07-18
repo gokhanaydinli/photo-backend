@@ -41,31 +41,130 @@ const storage = multer.diskStorage({
 });
 const upload = multer({ storage });
 
-// Fotoğraf yükleme endpoint'i
 app.post('/upload', upload.single('photo'), (req, res) => {
   if (!req.file) return res.status(400).send('Dosya yüklenemedi');
 
   const fileUrl = `/uploads/${req.file.filename}`;
+  const fullUrl = `${req.protocol}://${req.get('host')}${fileUrl}`;
+
   res.send(`
-    <h2>Fotoğraf başarıyla yüklendi!</h2>
-    <p><a href="${fileUrl}" target="_blank">Fotoğrafı Görüntüle</a></p>
-    <p><a href="/">Yeni fotoğraf yükle</a></p>
+    <!DOCTYPE html>
+    <html lang="tr">
+    <head>
+      <meta charset="UTF-8">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <title>Yükleme Başarılı</title>
+      <style>
+        body {
+          font-family: sans-serif;
+          background: #f0f0f0;
+          padding: 20px;
+          text-align: center;
+        }
+        .box {
+          background: white;
+          padding: 20px;
+          border-radius: 10px;
+          display: inline-block;
+          max-width: 400px;
+          box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        img {
+          max-width: 100%;
+          border-radius: 8px;
+          margin-top: 15px;
+        }
+        a.button {
+          display: inline-block;
+          margin-top: 20px;
+          padding: 10px 20px;
+          background-color: #4CAF50;
+          color: white;
+          border-radius: 6px;
+          text-decoration: none;
+        }
+      </style>
+    </head>
+    <body>
+      <div class="box">
+        <h2>Fotoğraf başarıyla yüklendi ✅</h2>
+        <a href="${fullUrl}" target="_blank">${req.file.filename}</a>
+        <br>
+        <img src="${fileUrl}" alt="Yüklenen Fotoğraf">
+        <br>
+        <a class="button" href="/">Yeni fotoğraf yükle</a>
+      </div>
+    </body>
+    </html>
   `);
 });
 
-// Yüklenen dosyaları listele
+
 app.get('/list', (req, res) => {
   fs.readdir(uploadDir, (err, files) => {
     if (err) return res.status(500).send('Dosyalar okunamadı');
-    if (!files.length) return res.send('<h2>Hiç dosya yok</h2>');
+    if (!files.length) return res.send('<h2>Hiç dosya yüklenmemiş</h2>');
 
-    const list = files.map(file =>
-      `<li><a href="/uploads/${file}" target="_blank">${file}</a></li>`
-    ).join('');
+    const list = files.map(file => `
+      <div class="item">
+        <img src="/uploads/${file}" alt="${file}">
+        <br>
+        <a class="button" href="/uploads/${file}" download>İndir</a>
+      </div>
+    `).join('');
 
-    res.send(`<h2>Yüklenen Dosyalar</h2><ul>${list}</ul><p><a href="/">← Geri</a></p>`);
+    res.send(`
+      <!DOCTYPE html>
+      <html lang="tr">
+      <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>Yüklenen Dosyalar</title>
+        <style>
+          body {
+            font-family: sans-serif;
+            background: #f0f0f0;
+            padding: 20px;
+            text-align: center;
+          }
+          .gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 20px;
+          }
+          .item {
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+          }
+          img {
+            max-width: 100%;
+            border-radius: 6px;
+            margin-bottom: 10px;
+          }
+          .button {
+            display: inline-block;
+            padding: 8px 14px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+          }
+        </style>
+      </head>
+      <body>
+        <h2>Yüklenen Tüm Fotoğraflar</h2>
+        <div class="gallery">
+          ${list}
+        </div>
+        <br><a class="button" href="/">← Geri</a>
+      </body>
+      </html>
+    `);
   });
 });
+
 
 app.listen(PORT, () => {
   console.log(`Server ${PORT} portunda çalışıyor`);
