@@ -107,8 +107,7 @@ app.get('/list', (req, res) => {
 
     const list = files.map(file => `
       <div class="item">
-        <img src="/uploads/${file}" alt="${file}">
-        <br>
+        <img src="/uploads/${file}" alt="${file}" loading="lazy">
         <a class="button" href="/uploads/${file}" download>İndir</a>
       </div>
     `).join('');
@@ -119,51 +118,66 @@ app.get('/list', (req, res) => {
       <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <title>Yüklenen Dosyalar</title>
+        <title>Yüklenen Fotoğraflar</title>
         <style>
           body {
             font-family: sans-serif;
-            background: #f0f0f0;
+            background: #f5f5f5;
+            margin: 0;
             padding: 20px;
             text-align: center;
           }
+          h2 {
+            margin-bottom: 10px;
+          }
+          .top-buttons {
+            margin-bottom: 20px;
+          }
+          .button {
+            display: inline-block;
+            padding: 10px 16px;
+            margin: 4px;
+            background-color: #2196F3;
+            color: white;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 14px;
+          }
           .gallery {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
-            gap: 20px;
+            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            gap: 15px;
           }
           .item {
             background: white;
             padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            box-shadow: 0 1px 4px rgba(0,0,0,0.1);
           }
           img {
             max-width: 100%;
-            border-radius: 6px;
-            margin-bottom: 10px;
-          }
-          .button {
-            display: inline-block;
-            padding: 8px 14px;
-            background-color: #2196F3;
-            color: white;
-            border-radius: 6px;
-            text-decoration: none;
+            height: auto;
+            border-radius: 4px;
           }
         </style>
       </head>
       <body>
-        <h2>Yüklenen Tüm Fotoğraflar</h2>
+        <h2>Yüklenen Fotoğraflar</h2>
+
+        <div class="top-buttons">
+          <a class="button" href="/">← Geri</a>
+          <a class="button" href="/zip-all" download>Tümünü İndir (.zip)</a>
+        </div>
+
         <div class="gallery">
           ${list}
         </div>
-        <br><a class="button" href="/">← Geri</a>
       </body>
       </html>
     `);
   });
 });
+
 
 
 app.listen(PORT, () => {
