@@ -5,79 +5,286 @@
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>Fotoğraf Yükle</title>
   <style>
+    * { box-sizing: border-box; }
+    
     body {
-      font-family: Arial, sans-serif;
-      background: #f7f7f7;
-      padding: 20px;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+      background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
       margin: 0;
+      min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .container {
+      background: rgba(255,255,255,0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 20px;
+      box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+      padding: 40px;
+      width: 100%;
+      max-width: 450px;
+      text-align: center;
     }
 
     h1 {
       color: #333;
-      margin-bottom: 20px;
-      text-align: center;
+      margin-bottom: 10px;
+      font-size: 32px;
+      font-weight: 700;
+    }
+
+    .subtitle {
+      color: #666;
+      margin-bottom: 30px;
+      font-size: 16px;
     }
 
     form {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      width: 100%;
-      max-width: 400px;
       display: flex;
       flex-direction: column;
-      gap: 15px;
+      gap: 20px;
+    }
+
+    .file-input-wrapper {
+      position: relative;
+      border: 3px dashed #ddd;
+      border-radius: 16px;
+      padding: 30px 20px;
+      transition: all 0.3s ease;
+      background: #fafafa;
+      cursor: pointer;
+    }
+
+    .file-input-wrapper:hover {
+      border-color: #4CAF50;
+      background: #f0fff4;
+    }
+
+    .file-input-wrapper.dragover {
+      border-color: #4CAF50;
+      background: #e8f5e8;
+      transform: scale(1.02);
     }
 
     input[type="file"] {
-      padding: 10px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
+      position: absolute;
+      opacity: 0;
+      width: 100%;
+      height: 100%;
+      top: 0;
+      left: 0;
+      cursor: pointer;
+    }
+
+    .file-input-content {
+      pointer-events: none;
+    }
+
+    .file-icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+      display: block;
+    }
+
+    .file-text {
+      font-size: 18px;
+      font-weight: 600;
+      color: #333;
+      margin-bottom: 8px;
+    }
+
+    .file-subtext {
+      font-size: 14px;
+      color: #666;
+      margin-bottom: 0;
+    }
+
+    #file-info {
+      background: #e8f5e8;
+      border: 1px solid #4CAF50;
+      border-radius: 12px;
+      padding: 15px;
+      color: #2e7d32;
+      font-weight: 500;
+      margin-top: 10px;
+      display: none;
     }
 
     button {
-      background-color: #4CAF50;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
       color: white;
-      padding: 12px;
+      padding: 16px 24px;
       border: none;
-      border-radius: 6px;
-      font-size: 16px;
+      border-radius: 12px;
+      font-size: 18px;
+      font-weight: 600;
       cursor: pointer;
-      transition: background 0.2s ease-in-out;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
     }
 
     button:hover {
-      background-color: #45a049;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+    }
+
+    button:active {
+      transform: translateY(0);
+    }
+
+    button:disabled {
+      background: #ccc;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
     }
 
     .footer {
       margin-top: 30px;
-      font-size: 14px;
-      color: #777;
+      opacity: 0.8;
     }
 
-    a {
-      color: #4CAF50;
+    .footer a {
+      color: white;
       text-decoration: none;
+      font-weight: 600;
+      padding: 14px 28px;
+      background: linear-gradient(45deg, #4CAF50, #45a049);
+      border-radius: 25px;
+      box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+      transition: all 0.3s ease;
+      display: inline-block;
+      font-size: 16px;
+      border: 2px solid rgba(255,255,255,0.2);
+    }
+
+    .footer a:hover {
+      background: linear-gradient(45deg, #45a049, #3d8b40);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 20px rgba(76, 175, 80, 0.4);
+      border-color: rgba(255,255,255,0.4);
+    }
+
+    /* Mobile optimizations */
+    @media (max-width: 480px) {
+      .container {
+        padding: 30px 20px;
+        margin: 10px;
+      }
+      
+      h1 {
+        font-size: 24px;
+      }
+      
+      .file-input-wrapper {
+        padding: 20px 15px;
+      }
+      
+      .file-icon {
+        font-size: 36px;
+      }
+      
+      .file-text {
+        font-size: 16px;
+      }
+      
+      button {
+        font-size: 16px;
+        padding: 14px 20px;
+      }
     }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>📸 Fotoğraf Yükle</h1>
+    <p class="subtitle">Birden fazla fotoğraf seçebilirsiniz</p>
 
-  <h1>Fotoğraf Yükle</h1>
+    <form action="/upload" method="POST" enctype="multipart/form-data">
+      <div class="file-input-wrapper" id="dropArea">
+        <div class="file-input-content">
+          <span class="file-icon">🖼️</span>
+          <div class="file-text">Fotoğrafları seçin veya buraya sürükleyin</div>
+          <div class="file-subtext">Ctrl/Cmd ile birden fazla seçebilirsiniz</div>
+        </div>
+        <input type="file" name="photos" accept="image/*" multiple required id="fileInput">
+      </div>
+      
+      <div id="file-info"></div>
+      <button type="submit" id="uploadBtn">🚀 Yükle</button>
+    </form>
 
-  <form action="/upload" method="POST" enctype="multipart/form-data">
-    <input type="file" name="photo" accept="image/*" required>
-    <button type="submit">Yükle</button>
-  </form>
-  <!--
-  <div class="footer">
-    <a href="/list">Yüklenenleri Gör</a>
-  </div>-->
+    <div class="footer">
+      <a href="/list">📸 Galeriyi Gör</a>
+    </div>
+  </div>
+
+  <script>
+    const fileInput = document.getElementById('fileInput');
+    const fileInfo = document.getElementById('file-info');
+    const dropArea = document.getElementById('dropArea');
+    const uploadBtn = document.getElementById('uploadBtn');
+    
+    // Dosya seçim feedback'i
+    fileInput.addEventListener('change', function() {
+      const fileCount = this.files.length;
+      if (fileCount === 0) {
+        fileInfo.style.display = 'none';
+        uploadBtn.disabled = true;
+      } else {
+        fileInfo.style.display = 'block';
+        uploadBtn.disabled = false;
+        if (fileCount === 1) {
+          fileInfo.textContent = `✅ 1 fotoğraf seçildi: ${this.files[0].name}`;
+        } else {
+          fileInfo.textContent = `✅ ${fileCount} fotoğraf seçildi`;
+        }
+      }
+    });
+
+    // Drag & Drop desteği
+    ['dragenter', 'dragover', 'dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, preventDefaults, false);
+      document.body.addEventListener(eventName, preventDefaults, false);
+    });
+
+    ['dragenter', 'dragover'].forEach(eventName => {
+      dropArea.addEventListener(eventName, highlight, false);
+    });
+
+    ['dragleave', 'drop'].forEach(eventName => {
+      dropArea.addEventListener(eventName, unhighlight, false);
+    });
+
+    dropArea.addEventListener('drop', handleDrop, false);
+
+    function preventDefaults(e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
+
+    function highlight(e) {
+      dropArea.classList.add('dragover');
+    }
+
+    function unhighlight(e) {
+      dropArea.classList.remove('dragover');
+    }
+
+    function handleDrop(e) {
+      const dt = e.dataTransfer;
+      const files = dt.files;
+      fileInput.files = files;
+      fileInput.dispatchEvent(new Event('change'));
+    }
+
+    // Initial state
+    uploadBtn.disabled = true;
+  </script>
 
 </body>
 </html>
